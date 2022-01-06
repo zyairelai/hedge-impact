@@ -15,15 +15,14 @@ def lets_make_some_money():
         response = api_binance.position_information(pair)
 
         if api_binance.LONG_SIDE(response) == "NO_POSITION" and api_binance.SHORT_SIDE(response) == "NO_POSITION":
-            if response[0].get('marginType') != "isolated": api_binance.change_margin_to_ISOLATED(pair)
+            # if response[0].get('marginType') != "isolated": api_binance.change_margin_to_ISOLATED(pair)
+            if response[0].get('marginType') != "cross": api_binance.change_margin_to_CROSSED(pair)
             if int(response[0].get("leverage")) != leverage: api_binance.change_leverage(pair, leverage)
-
-        if api_binance.LONG_SIDE(response) == "NO_POSITION" and api_binance.SHORT_SIDE(response) == "NO_POSITION":
-            api_binance.market_open_long(pair, quantity)
-            api_binance.market_open_short(pair, quantity)
+            api_binance.market_hedge_open(pair, quantity)
 
         if api_binance.LONG_SIDE(response) == "LONGING":
-            if float(response[1].get('unRealizedProfit')) / float(response[1].get('isolatedMargin')) * 100 > config.take_profit_percentage:
+            if float(response[1].get('unRealizedProfit')) / float(response[1].get('isolatedWallet')) * 100 < 85 or \
+               float(response[1].get('unRealizedProfit')) / float(response[1].get('isolatedWallet')) * 100 > config.take_profit_percentage:
                 api_binance.market_close_long(pair, response)
             else: print(colored("_LONG_SIDE : HOLDING_LONG", "green"))
 
@@ -31,7 +30,8 @@ def lets_make_some_money():
         if api_binance.SHORT_SIDE(response) == "SHORTING" and api_binance.LONG_SIDE(response)  == "NO_POSITION" : print("_LONG_SIDE : 🐺 WAIT 🐺")
 
         if api_binance.SHORT_SIDE(response) == "SHORTING":
-            if float(response[2].get('unRealizedProfit')) / float(response[2].get('isolatedMargin')) * 100 > config.take_profit_percentage:
+            if float(response[2].get('unRealizedProfit')) / float(response[2].get('isolatedWallet')) * 100 < 85 or \
+               float(response[2].get('unRealizedProfit')) / float(response[2].get('isolatedWallet')) * 100 > config.take_profit_percentage:
                 api_binance.market_close_short(pair, response)
             else: print(colored("SHORT_SIDE : HOLDING_SHORT", "red"))
 

@@ -28,11 +28,14 @@ def change_leverage(pair, leverage):
 def change_margin_to_ISOLATED(pair):
     return client.futures_change_margin_type(symbol=pair, marginType="ISOLATED", timestamp=get_timestamp())
 
+def change_margin_to_CROSSED(pair):
+    return client.futures_change_margin_type(symbol=pair, marginType="CROSSED", timestamp=get_timestamp())
+
 def set_hedge_mode(): 
     if not client.futures_get_position_mode(timestamp=get_timestamp()).get('dualSidePosition'):
         return client.futures_change_position_mode(dualSidePosition="true", timestamp=get_timestamp())
 
-def market_open_long(pair, quantity):
+def market_hedge_open(pair, quantity):
     if live_trade:
         client.futures_create_order(symbol=pair,
                                     quantity=quantity,
@@ -40,17 +43,14 @@ def market_open_long(pair, quantity):
                                     type="MARKET",
                                     side="BUY",
                                     timestamp=get_timestamp())
-    print(colored("🚀 GO_LONG 🚀", "green"))
 
-def market_open_short(pair, quantity):
-    if live_trade:
         client.futures_create_order(symbol=pair,
                                     quantity=quantity,
                                     positionSide="SHORT",
                                     type="MARKET",
                                     side="SELL",
                                     timestamp=get_timestamp())
-    print(colored("💥 GO_SHORT 💥", "red"))
+        print("🚀 POSITION OPENED 🚀")
 
 def market_close_long(pair, response):
     if live_trade:
