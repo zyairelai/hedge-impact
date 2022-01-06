@@ -1,8 +1,8 @@
-live_trade = False
+live_trade = True
 
 coin = ["BTC"]
 quantity = [0.001]
-leverage = [100]
+leverage = [125]
 take_profit_percentage = 150
 
 pair = []
