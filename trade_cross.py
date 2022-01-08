@@ -15,7 +15,6 @@ def lets_make_some_money():
         response = api_binance.position_information(pair)
 
         if api_binance.LONG_SIDE(response) == "NO_POSITION" and api_binance.SHORT_SIDE(response) == "NO_POSITION":
-            # if response[0].get('marginType') != "isolated": api_binance.change_margin_to_ISOLATED(pair)
             if response[0].get('marginType') != "cross": api_binance.change_margin_to_CROSSED(pair)
             if int(response[0].get("leverage")) != leverage: api_binance.change_leverage(pair, leverage)
             api_binance.market_hedge_open(pair, quantity)
